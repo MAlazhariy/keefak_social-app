@@ -1,3 +1,4 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shop_app/layout/social_layout.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/modules/social_login/login_cubit/login_cubit.dart';
@@ -9,7 +10,6 @@ import 'package:shop_app/shared/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class SocialLoginScreen extends StatelessWidget {
   SocialLoginScreen({Key? key}) : super(key: key);

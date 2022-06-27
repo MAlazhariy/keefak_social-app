@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 Future<void> onBackgroundHandler(RemoteMessage message) async {
   log('onBackgroundMessage: ${message.data.toString()}');
@@ -49,8 +47,6 @@ void main() async {
   });
 
   FirebaseMessaging.onBackgroundMessage(onBackgroundHandler);
-
-  if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
 
   runApp(const MyApp());
 }
