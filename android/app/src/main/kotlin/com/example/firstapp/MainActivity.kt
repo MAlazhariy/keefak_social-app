@@ -1,4 +1,4 @@
-package com.shop_app
+package malazhariy.training.shop_app
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent

@@ -28,9 +28,9 @@ void main() async {
   await Firebase.initializeApp(
       // options: const FirebaseOptions(
       //   apiKey: "AIzaSyDZ8RwjQKQPol5_t6LkWdokmlE_wyxF8E4",
-      //   appId: "com.shop_app",
+      //   appId: "malazhariy.training.shop_app",
       //   messagingSenderId: "XXX",
-      //   projectId: "com.shop_app",
+      //   projectId: "malazhariy.training.shop_app",
       // ),
       );
 
