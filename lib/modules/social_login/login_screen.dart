@@ -234,7 +234,7 @@ class SocialLoginScreen extends StatelessWidget {
                               RaisedButton(
                                 onPressed: () {
                                   if (formKey.currentState!.validate()) {
-                                    cubit.signIn(
+                                    cubit.login(
                                       email: emailController.text,
                                       password: passwordController.text,
                                     );
@@ -269,7 +269,7 @@ class SocialLoginScreen extends StatelessWidget {
                                     ),
                                     child: (state is! SocialLoginLoading)
                                         ? Text(
-                                            'SIGN IN',
+                                            'LOGIN',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .headline2!
@@ -280,8 +280,7 @@ class SocialLoginScreen extends StatelessWidget {
                                                 ),
                                           )
                                         : const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 22.4),
+                                            padding: EdgeInsets.symmetric(horizontal: 22.4),
                                             child: SizedBox(
                                               height: 23,
                                               width: 23,

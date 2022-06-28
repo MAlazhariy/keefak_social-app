@@ -43,7 +43,7 @@ class SocialLoginCubit extends Cubit<SocialLoginStates> {
     emit(SocialLoginChangeColor());
   }
 
-  void signIn({
+  void login({
     required String email,
     required String password,
   }) {
