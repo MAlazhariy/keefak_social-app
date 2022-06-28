@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="malazhariy.training.shop_app">
    <application
-        android:label="Flutter course app"
+        android:label="keefak"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
