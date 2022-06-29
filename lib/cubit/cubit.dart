@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shop_app/models/social_app/comment_model.dart';
 import 'package:shop_app/models/social_app/message_model.dart';
@@ -28,7 +29,7 @@ class SocialCubit extends Cubit<SocialStates> {
 
   static SocialCubit get(context) => BlocProvider.of(context);
 
-  SocialUserModel? userModel;
+  UserModel? userModel;
   PostModel? postModel;
   int currentIndex = 0;
 
@@ -39,7 +40,7 @@ class SocialCubit extends Cubit<SocialStates> {
   File? postImage;
 
   List<GetPostModel> posts = [];
-  List<SocialUserModel> users = [];
+  List<UserModel> users = [];
   Map<String, List<MessageModel>?> chats = {};
 
   bool showCommentSendButton = false;
@@ -63,11 +64,11 @@ class SocialCubit extends Cubit<SocialStates> {
     emit(SocialChangeSendCommentVisibilityState());
   }
 
-  void getUserData() {
+  Future<void> getUserData() async {
     emit(SocialGetUserLoadingState());
 
     FirebaseFirestore.instance.collection('users').doc(uId).get().then((value) {
-      userModel = SocialUserModel.fromJson(value.data()!);
+      userModel = UserModel.fromJson(value.data()!);
       // log(userModel.toMap().toString());
       emit(SocialGetUserSuccessState());
     }).catchError((error) {
@@ -350,6 +351,8 @@ class SocialCubit extends Cubit<SocialStates> {
         }).catchError((error) {
           log('error when get post comments: ${error.toString()}');
         });
+
+        emit(SocialGetSinglePostSuccessState());
       }
       emit(SocialGetPostsSuccessState());
     }).catchError((error) {
@@ -432,7 +435,7 @@ class SocialCubit extends Cubit<SocialStates> {
       for (var user in value.docs) {
         if (user.id != uId) {
           users.add(
-            SocialUserModel.fromJson(
+            UserModel.fromJson(
               user.data(),
             ),
           );
