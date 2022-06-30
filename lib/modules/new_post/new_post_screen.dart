@@ -10,7 +10,7 @@ class NewPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textController = TextEditingController();
+    var postController = TextEditingController();
 
     return BlocConsumer<SocialCubit, SocialStates>(
       listener: (context, state) {
@@ -33,6 +33,7 @@ class NewPostScreen extends StatelessWidget {
             title: const Text(
               'Add post',
             ),
+
             leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -41,21 +42,23 @@ class NewPostScreen extends StatelessWidget {
                 IconBroken.Arrow___Left,
               ),
             ),
+
             actions: [
-              TextButton(
-                onPressed: () {
-                  if (cubit.postImage != null) {
-                    cubit.createPostWithImage(
-                      text: textController.text,
-                    );
-                  } else {
-                    cubit.createNewPost(
-                      text: textController.text,
-                    );
-                  }
-                },
-                child: Text('post'.toUpperCase()),
-              ),
+              if (postController.text.trim().isNotEmpty || cubit.postImage != null)
+                TextButton(
+                  onPressed: () {
+                    if (cubit.postImage != null) {
+                      cubit.createPostWithImage(
+                        text: postController.text,
+                      );
+                    } else {
+                      cubit.createNewPost(
+                        text: postController.text.trim(),
+                      );
+                    }
+                  },
+                  child: Text('post'.toUpperCase()),
+                ),
               const SizedBox(width: 5),
             ],
           ),
@@ -130,9 +133,12 @@ class NewPostScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Expanded(
                   child: TextFormField(
-                    controller: textController,
+                    controller: postController,
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
+                    onChanged: (value){
+                      cubit.typingPost();
+                    },
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'What\'s in your mind?',
