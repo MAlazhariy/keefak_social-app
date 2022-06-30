@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shop_app/layout/social_layout.dart';
@@ -46,6 +47,8 @@ void main() async {
     Fluttertoast.showToast(msg: 'onMessageOpenedApp');
   });
 
+  log('token: $token');
+
   FirebaseMessaging.onBackgroundMessage(onBackgroundHandler);
 
   runApp(const MyApp());
@@ -63,9 +66,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => SocialCubit()
-            ..getUserData()
-            ..getPosts(),
+          create: (context) => SocialCubit()..getUserData()..getPosts(),
         ),
       ],
       child: MaterialApp(
