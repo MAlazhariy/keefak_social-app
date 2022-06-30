@@ -30,7 +30,6 @@ class SocialLayout extends StatelessWidget {
               ),
             ],
           ),
-          floatingActionButton: fAB(cubit.currentIndex, context),
 
           body: cubit.userModel != null
               ? Column(
@@ -56,10 +55,6 @@ class SocialLayout extends StatelessWidget {
                 label: 'Chats',
               ),
               BottomNavigationBarItem(
-                icon: Icon(IconBroken.Location),
-                label: 'Users',
-              ),
-              BottomNavigationBarItem(
                 icon: Icon(IconBroken.Setting),
                 label: 'Settings',
               ),
@@ -69,30 +64,5 @@ class SocialLayout extends StatelessWidget {
         );
       },
     );
-  }
-
-  Widget? fAB(int currentIndex, BuildContext context) {
-    if (currentIndex == 0) {
-      // add a post
-      return FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const NewPostScreen(),
-            ),
-          );
-        },
-        child: const Icon(
-          IconBroken.Paper_Upload,
-          color: Colors.blueAccent,
-          size: 30,
-        ),
-        tooltip: 'Add post',
-        backgroundColor: Colors.white,
-      );
-    }
-
-    return null;
   }
 }

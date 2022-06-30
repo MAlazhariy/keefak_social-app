@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shop_app/models/social_app/comment_model.dart';
 import 'package:shop_app/models/social_app/message_model.dart';
@@ -48,14 +47,12 @@ class SocialCubit extends Cubit<SocialStates> {
   List<Widget> screens = [
     const HomeScreen(),
     const ChatsScreen(),
-    const UsersScreen(),
     const SettingsScreen(),
   ];
 
   List<String> titles = [
     'Home',
     'Chats',
-    'Users',
     'Settings',
   ];
 
@@ -253,6 +250,10 @@ class SocialCubit extends Cubit<SocialStates> {
       emit(SocialCreatePostWithImageErrorState(error.toString()));
       log('error when createPostWithImage: ${error.toString()}');
     });
+  }
+
+  void typingPost(){
+    emit(SocialTypingPostState());
   }
 
   Future<void> createNewPost({

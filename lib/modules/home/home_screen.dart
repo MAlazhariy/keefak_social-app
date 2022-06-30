@@ -2,6 +2,7 @@
 import 'package:shop_app/modules/comments_screen/comments_screen.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
+import 'package:shop_app/modules/new_post/new_post_screen.dart';
 import 'package:shop_app/shared/components/push.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 import 'package:flutter/material.dart';
@@ -17,18 +18,119 @@ class HomeScreen extends StatelessWidget {
       builder: (context, state) {
         var cubit = SocialCubit.get(context);
 
+        if(state is SocialGetPostsErrorState) {
+          return Center(
+            child: Text(
+              state.error,
+              style: const TextStyle(
+                fontSize: 23,
+              ),
+            ),
+          );
+        }
+
         if (cubit.userModel != null && cubit.posts.isNotEmpty) {
-          return ListView.separated(
-            itemBuilder: (context, index) {
-              return postBuilder(context, index);
-            },
-            separatorBuilder: (context, index) => const SizedBox(height: 8),
-            itemCount: cubit.posts.length,
+          return Column(
+            children: [
+
+              Expanded(
+                child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    return itemBuilder(context, index-1);
+                  },
+                  separatorBuilder: (context, index) => const SizedBox(height: 8),
+                  itemCount: cubit.posts.length +1,
+                ),
+              ),
+            ],
           );
         }
 
         return const Center(child: CircularProgressIndicator());
       },
+    );
+  }
+
+  Widget itemBuilder(BuildContext context, int index){
+    if(index == -1) {
+      return addPostBuilder(context);
+    }
+
+    return postBuilder(context, index);
+  }
+
+  Widget addPostBuilder(BuildContext context){
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(
+        top: 5,
+        bottom: 3,
+        start: 10,
+        end: 10,
+      ),
+      child: Row(
+        children: [
+          // user image
+          Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: NetworkImage(
+                  SocialCubit.get(context).userModel!.image,
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+
+          // add post
+          Expanded(
+            child: GestureDetector(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NewPostScreen(),
+                  ),
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(
+                  vertical: 1,
+                ),
+                width: double.maxFinite,
+                height: 45,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.grey[400]!,
+                      blurRadius: 3,
+                      offset: const Offset(0, 1.5),
+                    ),
+                  ],
+                ),
+                alignment: AlignmentDirectional.centerStart,
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    start: 20,
+                  ),
+                  child: Text(
+                    'What\'s in your mind?',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -236,6 +338,7 @@ class HomeScreen extends StatelessWidget {
           // ),
           // const SizedBox(height: 8),
           // post image
+
           if (postModel.postImage.isNotEmpty)
             Container(
               width: double.maxFinite,
@@ -252,7 +355,7 @@ class HomeScreen extends StatelessWidget {
             ),
 
           const SizedBox(height: 6),
-          // comments and likes
+          // comments and likes details
           Row(
             children: [
               Icon(
@@ -298,7 +401,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
 
-          // comment & like
+          // write a comment & like
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

@@ -15,6 +15,7 @@ class SocialGetUserErrorState extends SocialStates {
 
 /// get posts
 class SocialGetPostsLoadingState extends SocialStates {}
+class SocialGetSinglePostSuccessState extends SocialStates {}
 class SocialGetPostsSuccessState extends SocialStates {}
 class SocialGetPostsErrorState extends SocialStates {
   final String error;
@@ -83,6 +84,8 @@ class SocialUpdateBioErrorState extends SocialStates {
 }
 
 /// create a new post
+class SocialTypingPostState extends SocialStates {}
+
 class SocialRemovePostImageSuccessState extends SocialStates {}
 
 class SocialGetPostImageLoadingState extends SocialStates {}
