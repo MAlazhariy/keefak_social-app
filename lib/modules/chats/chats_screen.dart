@@ -40,7 +40,7 @@ class ChatsScreen extends StatelessWidget {
   }
 
   Widget userBuilder({
-    required SocialUserModel userModel,
+    required UserModel userModel,
     required BuildContext context,
   }) {
     return Container(

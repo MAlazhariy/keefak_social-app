@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/modules/social_login/login_cubit/login_states.dart';
@@ -54,15 +55,21 @@ class SocialLoginCubit extends Cubit<SocialLoginStates> {
         .signInWithEmailAndPassword(
       email: email,
       password: password,
-    ).then((value) {
+    ).then((value) async {
       // save uid in cache
       CacheHelper.setSocialUId(value.user!.uid);
       // save uid in global var
       uId = value.user!.uid;
+      value.user!.sendEmailVerification();
+      var cubit = SocialCubit();
+      await cubit.getUserData();
+      if(cubit.userModel?.token != token){
+        FirebaseFirestore.instance.collection('users').doc(uId).update({
+          'token': token,
+        });
+      }
 
       emit(SocialLoginSuccessful(value.user!.uid));
-
-      SocialCubit()..getUserData()..getPosts();
     }).catchError((error) {
       log('--Error during SignIn: ${error.toString()}');
       emit(SocialLoginError(error.toString()));

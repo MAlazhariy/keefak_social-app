@@ -1,4 +1,4 @@
-class SocialUserModel {
+class UserModel {
   late String name;
   late String email;
   late String uId;
@@ -7,8 +7,9 @@ class SocialUserModel {
   late String cover;
   late String bio;
   late bool isEmailVerified;
+  late String token;
 
-  SocialUserModel({
+  UserModel({
     required this.email,
     required this.name,
     required this.phone,
@@ -17,9 +18,10 @@ class SocialUserModel {
     required this.cover,
     required this.bio,
     required this.isEmailVerified,
+    required this.token,
   });
 
-  SocialUserModel.fromJson(Map<String, dynamic> json) {
+  UserModel.fromJson(Map<String, dynamic> json) {
     email = json['email'];
     name = json['name'];
     phone = json['phone'];
@@ -28,6 +30,7 @@ class SocialUserModel {
     cover = json['cover'];
     bio = json['bio'];
     isEmailVerified = json['isEmailVerified'];
+    token = json['token'];
   }
 
   Map<String, dynamic> toMap() {
@@ -40,6 +43,7 @@ class SocialUserModel {
       'cover': cover,
       'bio': bio,
       'isEmailVerified': isEmailVerified,
+      'token': token,
     };
   }
 }

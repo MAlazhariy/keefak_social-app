@@ -15,7 +15,7 @@ class ChatDetailsScreen extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final SocialUserModel theUser;
+  final UserModel theUser;
 
   @override
   Widget build(BuildContext context) {

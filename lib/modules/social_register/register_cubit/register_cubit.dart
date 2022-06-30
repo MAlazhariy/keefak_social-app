@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shop_app/models/social_app/social_user_model.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/modules/social_register/register_cubit/register_states.dart';
+import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/network/local/cache_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,7 +81,7 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
     required String uId,
     required BuildContext context,
   }) {
-    var userModel = SocialUserModel(
+    final userModel = UserModel(
       email: email,
       name: name,
       phone: phone,
@@ -89,6 +90,7 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
       cover: 'https://img.freepik.com/free-vector/hand-drawn-psychedelic-colorful-background_23-2149075812.jpg?w=900&t=st=1652084208~exp=1652084808~hmac=39bc5b885407fed98b7f70b82e221e00a6d31dd531d892337981a8929f74681c',
       bio: '',
       isEmailVerified: false,
+      token: token,
     );
 
     // save uid in cache
@@ -96,7 +98,7 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
 
     // save uid in global var
     uId = uId;
-    SocialCubit.get(context).userModel = SocialUserModel.fromJson(userModel.toMap());
+    SocialCubit.get(context).userModel = UserModel.fromJson(userModel.toMap());
 
     // save user model in cache
     CacheHelper.setUserModel(userModel.toMap());
@@ -108,7 +110,6 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
         .set(userModel.toMap())
         .then((_) {
       emit(SocialCreateUserSuccessful());
-      SocialCubit()..getUserData()..getPosts();
     }).catchError((error) {
       log('-- Error when createUser: ${error.toString()}');
       emit(SocialRegisterError(error.toString()));
