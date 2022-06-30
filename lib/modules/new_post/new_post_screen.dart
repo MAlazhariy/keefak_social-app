@@ -146,7 +146,7 @@ class NewPostScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // picture
+                // post image
                 if (cubit.postImage != null)
                   Stack(
                     alignment: AlignmentDirectional.topEnd,

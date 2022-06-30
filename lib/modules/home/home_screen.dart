@@ -1,8 +1,11 @@
 
+import 'dart:developer';
+
 import 'package:shop_app/modules/comments_screen/comments_screen.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
 import 'package:shop_app/modules/new_post/new_post_screen.dart';
+import 'package:shop_app/modules/post_image_screen/post_image_screen.dart';
 import 'package:shop_app/shared/components/push.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +21,7 @@ class HomeScreen extends StatelessWidget {
       builder: (context, state) {
         var cubit = SocialCubit.get(context);
 
+        // todo: handle this error screen
         if(state is SocialGetPostsErrorState) {
           return Center(
             child: Text(
@@ -237,120 +241,32 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          // // hashes
-          // Wrap(
-          //   // crossAxisAlignment: WrapCrossAlignment.start,
-          //   alignment: WrapAlignment.start,
-          //   direction: Axis.horizontal,
-          //   spacing: 5,
-          //   children: [
-          //     SizedBox(
-          //       height: 21.5,
-          //       child: MaterialButton(
-          //         child: const Text(
-          //           '#MAlazhariy',
-          //           style: TextStyle(
-          //             color: Colors.blueAccent,
-          //             fontSize: 14,
-          //             fontWeight: FontWeight.w600,
-          //             height: 1.2,
-          //           ),
-          //         ),
-          //         onPressed: () {},
-          //         padding: EdgeInsets.zero,
-          //         minWidth: 0,
-          //         elevation: 0,
-          //       ),
-          //     ),
-          //     SizedBox(
-          //       height: 21.5,
-          //       child: MaterialButton(
-          //         child: const Text(
-          //           '#software',
-          //           style: TextStyle(
-          //             color: Colors.blueAccent,
-          //             fontSize: 14,
-          //             fontWeight: FontWeight.w600,
-          //             height: 1.2,
-          //           ),
-          //         ),
-          //         onPressed: () {},
-          //         padding: EdgeInsets.zero,
-          //         minWidth: 0,
-          //         elevation: 0,
-          //       ),
-          //     ),
-          //     SizedBox(
-          //       height: 21.5,
-          //       child: MaterialButton(
-          //         child: const Text(
-          //           '#flutter',
-          //           style: TextStyle(
-          //             color: Colors.blueAccent,
-          //             fontSize: 14,
-          //             fontWeight: FontWeight.w600,
-          //             height: 1.2,
-          //           ),
-          //         ),
-          //         onPressed: () {},
-          //         padding: EdgeInsets.zero,
-          //         minWidth: 0,
-          //         elevation: 0,
-          //       ),
-          //     ),
-          //     SizedBox(
-          //       height: 21.5,
-          //       child: MaterialButton(
-          //         child: const Text(
-          //           '#software_developer',
-          //           style: TextStyle(
-          //             color: Colors.blueAccent,
-          //             fontSize: 14,
-          //             fontWeight: FontWeight.w600,
-          //             height: 1.2,
-          //           ),
-          //         ),
-          //         onPressed: () {},
-          //         padding: EdgeInsets.zero,
-          //         minWidth: 0,
-          //         elevation: 0,
-          //       ),
-          //     ),
-          //     SizedBox(
-          //       height: 21.5,
-          //       child: MaterialButton(
-          //         child: const Text(
-          //           '#flutter_developer',
-          //           style: TextStyle(
-          //             color: Colors.blueAccent,
-          //             fontSize: 14,
-          //             fontWeight: FontWeight.w600,
-          //             height: 1.2,
-          //           ),
-          //         ),
-          //         onPressed: () {},
-          //         padding: EdgeInsets.zero,
-          //         minWidth: 0,
-          //         elevation: 0,
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          // const SizedBox(height: 8),
-          // post image
 
+          // post image
           if (postModel.postImage.isNotEmpty)
-            Container(
-              width: double.maxFinite,
-              height: 200,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                    postModel.postImage,
+            GestureDetector(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PostImageScreen(
+                      image: postModel.postImage,
+                    ),
                   ),
-                  fit: BoxFit.cover,
+                );
+              },
+              child: Container(
+                width: double.maxFinite,
+                height: 200,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      postModel.postImage,
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                borderRadius: BorderRadius.circular(10),
               ),
             ),
 
