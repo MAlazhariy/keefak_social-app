@@ -1,18 +1,20 @@
-
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
-import 'package:shop_app/shared/components/dismiss_keyboard.dart';
+import 'package:shop_app/helpers/dismiss_keyboard.dart';
+import 'package:shop_app/models/post_model/post_model.dart';
+import 'package:shop_app/shared/components/components/comment/comment_widget.dart';
+import 'package:shop_app/shared/components/components/user_image/user_image.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CommentsScreen extends StatelessWidget {
   const CommentsScreen({
-    required this.postIndex,
+    required this.postModel,
     Key? key,
   }) : super(key: key);
 
-  final int postIndex;
+  final PostModel postModel;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,6 @@ class CommentsScreen extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         var cubit = SocialCubit.get(context);
-        var postModel = cubit.posts[postIndex];
         var userModel = cubit.userModel!;
 
         return Scaffold(
@@ -39,72 +40,6 @@ class CommentsScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // bottomSheet: Container(
-          //   padding: const EdgeInsets.symmetric(
-          //     horizontal: 10,
-          //   ),
-          //   child: Row(
-          //     children: [
-          //       // user image
-          //       Container(
-          //         width: 35,
-          //         height: 35,
-          //         decoration: BoxDecoration(
-          //           shape: BoxShape.circle,
-          //           image: DecorationImage(
-          //             image: NetworkImage(
-          //               userModel.image,
-          //             ),
-          //             fit: BoxFit.cover,
-          //           ),
-          //         ),
-          //       ),
-          //       const SizedBox(width: 11),
-          //       // write a comment
-          //       Expanded(
-          //         child: TextFormField(
-          //           controller: commentController,
-          //           minLines: 1,
-          //           maxLines: 3,
-          //           onChanged: (value) {
-          //             cubit.sendCommentVisibility(value);
-          //           },
-          //           keyboardType: TextInputType.multiline,
-          //           decoration: const InputDecoration(
-          //             border: InputBorder.none,
-          //             hintText: 'Write a comment ..',
-          //           ),
-          //         ),
-          //       ),
-          //       if (cubit.showCommentSendButton)
-          //         MaterialButton(
-          //           onPressed: () {
-          //             dismissKeyboard(context);
-          //
-          //             cubit
-          //                 .commentOnPost(
-          //               comment: commentController.text,
-          //               postModel: postModel,
-          //             )
-          //                 .then((value) {
-          //               commentController.text = '';
-          //             });
-          //           },
-          //           padding: const EdgeInsets.symmetric(horizontal: 8),
-          //           minWidth: 0,
-          //           shape: RoundedRectangleBorder(
-          //             borderRadius: BorderRadius.circular(10),
-          //           ),
-          //           child: const Icon(
-          //             IconBroken.Send,
-          //             color: Colors.blueAccent,
-          //             size: 23,
-          //           ),
-          //         ),
-          //     ],
-          //   ),
-          // ),
 
           body: Container(
             decoration: BoxDecoration(
@@ -130,6 +65,7 @@ class CommentsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // post & comments
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -139,19 +75,9 @@ class CommentsScreen extends StatelessWidget {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // user image
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    postModel.userImage,
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                            UserImage(
+                              userImage: postModel.userImage,
+                              size: 50,
                             ),
                             const SizedBox(width: 11),
                             // name and date
@@ -234,7 +160,7 @@ class CommentsScreen extends StatelessWidget {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                cubit.likePost(postIndex: postIndex);
+                                cubit.likePost(postModel: postModel);
                               },
                               // padding: EdgeInsets.zero,
                               // minWidth: 0,
@@ -291,10 +217,12 @@ class CommentsScreen extends StatelessWidget {
                         ),
 
                         const SizedBox(height: 6),
-
+                        // comments
                         ListView.separated(
                           itemBuilder: (context, index) {
-                            return commentBuilder(context, index);
+                            return CommentWidget(
+                              commentModel: postModel.comments![index],
+                            );
                           },
                           separatorBuilder: (context, index) {
                             return const SizedBox(height: 15);
@@ -304,36 +232,13 @@ class CommentsScreen extends StatelessWidget {
                           shrinkWrap: true,
                         ),
 
-                        // Expanded(
-                        //   child: postModel.comments?.isNotEmpty ?? false
-                        //       ? ListView.separated(
-                        //           itemBuilder: (context, index) {
-                        //             return commentBuilder(context, index);
-                        //           },
-                        //           separatorBuilder: (context, index) {
-                        //             return const SizedBox(height: 15);
-                        //           },
-                        //           itemCount: postModel.comments?.length ?? 0,
-                        //           physics: const BouncingScrollPhysics(),
-                        //     shrinkWrap: true,
-                        //         )
-                        //       : const Center(
-                        //           child: Text(
-                        //             'No comments yet.',
-                        //             style: TextStyle(
-                        //               color: Colors.grey,
-                        //               fontSize: 15,
-                        //               fontWeight: FontWeight.w500,
-                        //             ),
-                        //           ),
-                        //         ),
-                        // ),
-
                         const SizedBox(height: 9),
                       ],
                     ),
                   ),
                 ),
+
+                // Divider
                 Container(
                   height: 0.8,
                   width: double.maxFinite,
@@ -343,22 +248,12 @@ class CommentsScreen extends StatelessWidget {
                   ),
                 ),
 
-                // add comment
+                // add a comment
                 Row(
                   children: [
-                    // user image
-                    Container(
-                      width: 35,
-                      height: 35,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            userModel.image,
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    UserImage(
+                      userImage: userModel.image,
+                      size: 35,
                     ),
                     const SizedBox(width: 11),
                     // write a comment
@@ -368,7 +263,7 @@ class CommentsScreen extends StatelessWidget {
                         minLines: 1,
                         maxLines: 3,
                         onChanged: (value) {
-                          cubit.sendCommentVisibility(value.trim());
+                          cubit.changeSendButtonVisibility(value.trim());
                         },
                         keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
@@ -382,12 +277,10 @@ class CommentsScreen extends StatelessWidget {
                         onPressed: () {
                           dismissKeyboard(context);
 
-                          cubit
-                              .commentOnPost(
+                          cubit.commentOnPost(
                             comment: commentController.text.trim(),
                             postModel: postModel,
-                          )
-                              .then((value) {
+                          ).then((value) {
                             commentController.text = '';
                           });
                         },
@@ -409,89 +302,6 @@ class CommentsScreen extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget commentBuilder(BuildContext context, int index) {
-    var postModel = SocialCubit.get(context).posts[postIndex];
-    var commentModel = postModel.comments![index];
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // user image
-        Padding(
-          padding: const EdgeInsetsDirectional.only(
-            top: 8,
-          ),
-          child: Container(
-            width: 35,
-            height: 35,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: NetworkImage(
-                  commentModel.userImage,
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 11),
-
-        // comment
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Colors.grey[400]!,
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-            ),
-            // margin: const EdgeInsets.symmetric(
-            //   horizontal: 10,
-            //   vertical: 10,
-            // ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // name
-                Text(
-                  commentModel.name,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                // comment
-                Text(
-                  commentModel.comment,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w500,
-                    height: 1.2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 2),
-      ],
     );
   }
 }

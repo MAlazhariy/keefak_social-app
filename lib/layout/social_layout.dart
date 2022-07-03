@@ -1,7 +1,6 @@
 
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
-import 'package:shop_app/modules/new_post/new_post_screen.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,13 +31,7 @@ class SocialLayout extends StatelessWidget {
           ),
 
           body: cubit.userModel != null
-              ? Column(
-                  children: [
-                    Expanded(
-                      child: cubit.screens[cubit.currentIndex],
-                    ),
-                  ],
-                )
+              ? cubit.screens[cubit.currentIndex]
               : const Center(child: CircularProgressIndicator()),
 
           bottomNavigationBar: BottomNavigationBar(

@@ -1,6 +1,7 @@
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
-import 'package:shop_app/shared/components/components.dart';
+import 'package:shop_app/shared/components/components/custom_white_text_form.dart';
+import 'package:shop_app/shared/components/components/snack_bar.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +52,7 @@ class UpdateBioScreen extends StatelessWidget {
                     ),
                     child: LinearProgressIndicator(),
                   ),
-                whiteTextForm(
+                CustomWhiteTextForm(
                   labelText: 'bio',
                   validator: (value) {
                     if(bioController.text == cubit.userModel!.bio){

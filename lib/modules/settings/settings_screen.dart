@@ -1,7 +1,8 @@
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
 import 'package:shop_app/modules/settings/update_bio_screen.dart';
-import 'package:shop_app/shared/components/push.dart';
+import 'package:shop_app/shared/components/components/push/push.dart';
+import 'package:shop_app/shared/components/components/user_image/user_image.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,16 +78,8 @@ class SettingsScreen extends StatelessWidget {
                             color: Theme.of(context).scaffoldBackgroundColor,
                             shape: BoxShape.circle,
                           ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  cubit.userModel!.image,
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                          child: UserImage(
+                            userImage: cubit.userModel!.image,
                           ),
                         ),
                       ),

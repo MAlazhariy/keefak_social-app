@@ -1,13 +1,13 @@
 import 'dart:developer';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shop_app/layout/social_layout.dart';
 import 'package:shop_app/cubit/cubit.dart';
-import 'package:shop_app/modules/social_login/login_screen.dart';
+import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/network/local/cache_helper.dart';
-import 'package:shop_app/shared/styles/themes.dart';
+import 'package:shop_app/shared/styles/themes/dark_theme.dart';
+import 'package:shop_app/shared/styles/themes/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -23,7 +23,7 @@ void main() async {
 
   // local DB init & open
   await Hive.initFlutter();
-  await Hive.openBox('shop_app');
+  await Hive.openBox('social_app');
 
   // init Firebase
   await Firebase.initializeApp(

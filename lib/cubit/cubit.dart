@@ -3,19 +3,21 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:shop_app/models/social_app/comment_model.dart';
-import 'package:shop_app/models/social_app/message_model.dart';
-import 'package:shop_app/models/social_app/post_model.dart';
-import 'package:shop_app/models/social_app/social_user_model.dart';
-import 'package:shop_app/modules/chats/chats_screen.dart';
+import 'package:shop_app/models/comment_model.dart';
+import 'package:shop_app/models/message_model.dart';
+import 'package:shop_app/models/post_model/post_model.dart';
+import 'package:shop_app/models/post_model/publish_post_model.dart';
+import 'package:shop_app/models/user_model.dart';
 import 'package:shop_app/cubit/states.dart';
-import 'package:shop_app/modules/home/home_screen.dart';
+import 'package:shop_app/modules/chats_screen/chats_screen.dart';
+import 'package:shop_app/modules/home_screen/home_screen.dart';
 import 'package:shop_app/modules/settings/settings_screen.dart';
 import 'package:shop_app/modules/settings/update_cover_screen.dart';
 import 'package:shop_app/modules/settings/update_profile_image_screen.dart';
-import 'package:shop_app/modules/social_login/login_screen.dart';
+import 'package:shop_app/modules/login/login_screen.dart';
+import 'package:shop_app/shared/components/components/push/push_and_finish.dart';
 import 'package:shop_app/shared/components/constants.dart';
-import 'package:shop_app/shared/components/push.dart';
+import 'package:shop_app/shared/components/components/push/push.dart';
 import 'package:shop_app/shared/network/local/cache_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +30,7 @@ class SocialCubit extends Cubit<SocialStates> {
   static SocialCubit get(context) => BlocProvider.of(context);
 
   UserModel? userModel;
-  PostModel? postModel;
+  PublishPostModel? postModel;
   int currentIndex = 0;
 
   final ImagePicker _picker = ImagePicker();
@@ -37,7 +39,7 @@ class SocialCubit extends Cubit<SocialStates> {
   File? profileImage;
   File? postImage;
 
-  List<GetPostModel> posts = [];
+  List<PostModel> posts = [];
   List<UserModel> users = [];
   Map<String, List<MessageModel>?> chats = {};
 
@@ -55,9 +57,9 @@ class SocialCubit extends Cubit<SocialStates> {
     'Settings',
   ];
 
-  void sendCommentVisibility(String text) {
+  void changeSendButtonVisibility(String text) {
     showCommentSendButton = text.isNotEmpty;
-    emit(SocialChangeSendCommentVisibilityState());
+    emit(SocialChangeSendButtonVisibilityState());
   }
 
   Future<void> getUserData() async {
@@ -264,7 +266,7 @@ class SocialCubit extends Cubit<SocialStates> {
     var now = DateTime.now();
 
     // create postModel
-    postModel = PostModel(
+    postModel = PublishPostModel(
       name: userModel!.name,
       uId: userModel!.uId,
       userImage: userModel!.image,
@@ -285,7 +287,7 @@ class SocialCubit extends Cubit<SocialStates> {
       // add post
       posts.insert(
         0,
-        GetPostModel.fromJson(
+        PostModel.fromJson(
           json: postModel!.toMap(),
           postId: value.id,
           likes: [],
@@ -319,7 +321,7 @@ class SocialCubit extends Cubit<SocialStates> {
             .get()
             .then((likeValue) {
           posts.add(
-            GetPostModel.fromJson(
+            PostModel.fromJson(
               json: postDoc.data(),
               postId: postDoc.id,
               likes: likeValue.docs.map((e) => e.id).toList(),
@@ -362,10 +364,10 @@ class SocialCubit extends Cubit<SocialStates> {
   }
 
   Future<void> likePost({
-    required int postIndex,
+    required PostModel postModel,
   }) async {
-    String postId = posts[postIndex].postId;
-    bool isLiked = posts[postIndex].likes.contains(userModel!.uId);
+    String postId = postModel.postId;
+    bool isLiked = postModel.likes.contains(userModel!.uId);
 
     FirebaseFirestore.instance
         .collection('posts')
@@ -376,9 +378,9 @@ class SocialCubit extends Cubit<SocialStates> {
       'like': !isLiked,
     }).then((_) {
       if (isLiked) {
-        posts[postIndex].likes.remove(userModel!.uId);
+        postModel.likes.remove(userModel!.uId);
       } else {
-        posts[postIndex].likes.add(userModel!.uId);
+        postModel.likes.add(userModel!.uId);
       }
 
       emit(SocialLikePostSuccessState());
@@ -390,7 +392,7 @@ class SocialCubit extends Cubit<SocialStates> {
 
   Future<void> commentOnPost({
     required String comment,
-    required GetPostModel postModel,
+    required PostModel postModel,
   }) async {
     var commentModel = CommentModel(
       comment: comment,

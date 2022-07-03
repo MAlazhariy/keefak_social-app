@@ -21,7 +21,7 @@ class CacheHelper {
 //   return sharedPref.getBool(key);
 // }
 
-  static final Box _box = Hive.box('shop_app');
+  static final Box _box = Hive.box('social_app');
 
   /// Social App login
   static void setSocialUId(String token) {

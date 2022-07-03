@@ -1,16 +1,37 @@
-# shop_app
+# Keefak - Social app
 
-A new Flutter project.
+Keefak is a simple social app for posting and chatting using Flutter with FireBase.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## content
+- [Skills used in the project](#skills-used-in-the-project)
+- [Screenshots](#screenshots)
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Skills used in the project:
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Flutter
+- FireBase Firestore
+- FireBase Storage
+- FireBase Authentication
+- FireBase Cloud Messaging *(FCM)*
+- FCM using REST API
+- OOP
+- Clean code
+- Bloc state management (Cubit)
+- Google play console
+- SOLID principles
+    - Single responsibility
+    - Open-closed
+    - Liskov substitution 
+- Model class
+- Native splash screen
+- Graphic design
+    - UX & UI principles
+    - Logo design
+
+
+## Screenshots:
+
+working on it ...
+

@@ -2,7 +2,8 @@ abstract class SocialStates{}
 
 class SocialInitState extends SocialStates {}
 
-class SocialChangeSendCommentVisibilityState extends SocialStates {}
+class SocialChangeSendButtonVisibilityState extends SocialStates {}
+class SocialChangeBottomNavState extends SocialStates {}
 
 /// get user data
 class SocialGetUserLoadingState extends SocialStates {}
@@ -14,8 +15,8 @@ class SocialGetUserErrorState extends SocialStates {
 }
 
 /// get posts
-class SocialGetPostsLoadingState extends SocialStates {}
 class SocialGetSinglePostSuccessState extends SocialStates {}
+class SocialGetPostsLoadingState extends SocialStates {}
 class SocialGetPostsSuccessState extends SocialStates {}
 class SocialGetPostsErrorState extends SocialStates {
   final String error;
@@ -23,7 +24,6 @@ class SocialGetPostsErrorState extends SocialStates {
   SocialGetPostsErrorState(this.error);
 }
 
-class SocialChangeBottomNavState extends SocialStates {}
 
 /// update cover image states
 class SocialUpdateCoverSuccessState extends SocialStates {}
@@ -142,9 +142,8 @@ class SocialGetAllUsersErrorState extends SocialStates {
 
 /// chats
 class SocialSendMessageSuccessState extends SocialStates {}
+class SocialGetMessagesSuccessState extends SocialStates {}
 class SocialSendMessageErrorState extends SocialStates {
   SocialSendMessageErrorState(this.error);
   final String error;
 }
-
-class SocialGetMessagesSuccessState extends SocialStates {}
