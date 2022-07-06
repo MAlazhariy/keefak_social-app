@@ -111,6 +111,29 @@ class SocialCreatePostWithImageErrorState extends SocialStates {
   SocialCreatePostWithImageErrorState(this.error);
 }
 
+/// edit post
+class SocialEditPostLoadingState extends SocialStates {}
+class SocialEditPostSuccessState extends SocialStates {}
+class SocialEditPostErrorState extends SocialStates {
+  final String error;
+
+  SocialEditPostErrorState(this.error);
+}
+
+class SocialEditPostWithImageLoadingState extends SocialStates {}
+class SocialEditPostWithImageErrorState extends SocialStates {
+  final String error;
+
+  SocialEditPostWithImageErrorState(this.error);
+}
+
+/// delete post
+class SocialDeletePostLoadingState extends SocialStates {}
+class SocialDeletePostSuccessState extends SocialStates {}
+class SocialDeletePostErrorState extends SocialStates {
+  final String error;
+  SocialDeletePostErrorState(this.error);
+}
 
 /// like post
 class SocialLikePostSuccessState extends SocialStates {}

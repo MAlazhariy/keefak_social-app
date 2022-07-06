@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:shop_app/helpers/get_image_name.dart';
 import 'package:shop_app/models/comment_model.dart';
 import 'package:shop_app/models/message_model.dart';
 import 'package:shop_app/models/post_model/post_model.dart';
@@ -298,6 +299,93 @@ class SocialCubit extends Cubit<SocialStates> {
     }).catchError((error) {
       log('error when createNewPost: ${error.toString()}');
       emit(SocialCreatePostErrorState(error.toString()));
+    });
+  }
+
+  /// edit post methods
+  Future<void> editPostWithImage({
+    required String text,
+    required String postId,
+    required PostModel postModel,
+  }) async {
+    emit(SocialEditPostWithImageLoadingState());
+
+    log('edit with image');
+
+    final imageName = postModel.postImage.isNotEmpty
+        ? getImageName(postModel.postImage)
+        : Uri.file(postImage!.path).pathSegments.last;
+
+    // upload profileImage to Firestore Storage
+    FirebaseStorage.instance
+        .ref('users/$uId/$imageName')
+        .putFile(postImage!)
+        .then((value) {
+      // get image url
+      value.ref.getDownloadURL().then((url) {
+        editPost(
+          text: text,
+          postImage: url,
+          postId: postId,
+          postModel: postModel,
+        );
+      }).catchError((error) {
+        emit(SocialEditPostWithImageErrorState(error.toString()));
+        log('error when getDownloadURL inside EditPostWithImage: ${error.toString()}');
+      });
+    }).catchError((error) {
+      emit(SocialCreatePostWithImageErrorState(error.toString()));
+      log('error when editPostWithImage: ${error.toString()}');
+    });
+  }
+
+  Future<void> editPost({
+    required String text,
+    String postImage = '',
+    required String postId,
+    required PostModel postModel,
+  }) async {
+    if (postImage.isEmpty) {
+      emit(SocialEditPostLoadingState());
+      log('post image is empty');
+    }
+
+    log('edit post');
+
+    FirebaseFirestore.instance.collection('posts').doc(postId).update({
+      'text': text,
+      'postImage': postImage,
+    }).then((value) {
+      // update changes on post model (copy by reference)
+      postModel.text = text;
+      postModel.postImage = postImage;
+
+      emit(SocialEditPostSuccessState());
+    }).catchError((error) {
+      log('error when editPost: ${error.toString()}');
+      emit(SocialEditPostErrorState(error.toString()));
+    });
+  }
+
+  /// delete post
+  Future<void> deletePost({
+    required PostModel postModel,
+  }) async {
+    emit(SocialDeletePostLoadingState());
+
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postModel.postId)
+        .delete()
+        .then((value) {
+      // update changes on post model
+      // todo: check this method is it works good?
+      posts.remove(postModel);
+
+      emit(SocialDeletePostSuccessState());
+    }).catchError((error) {
+      log('error when deletePost: ${error.toString()}');
+      emit(SocialDeletePostErrorState(error.toString()));
     });
   }
 

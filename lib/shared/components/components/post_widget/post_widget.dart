@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/models/post_model/post_model.dart';
 import 'package:shop_app/modules/comments_screen/comments_screen.dart';
+import 'package:shop_app/modules/edit_post_screen/edit_post_screen.dart';
 import 'package:shop_app/modules/show_post_image_screen/post_image_screen.dart';
+import 'package:shop_app/shared/components/components/custom_dialogs/custom_dialog/custom_dialog.dart';
+import 'package:shop_app/shared/components/components/custom_dialogs/dialog_button.dart';
+import 'package:shop_app/shared/components/components/pop_up_menu/pop_up_menu.dart';
+import 'package:shop_app/shared/components/components/pop_up_menu_item/pop_up_menu_item.dart';
 import 'package:shop_app/shared/components/components/push/push.dart';
+import 'package:shop_app/shared/components/components/snack_bar.dart';
 import 'package:shop_app/shared/components/components/user_image/user_image.dart';
+import 'package:shop_app/shared/components/components/user_image_tap/user_image_tap.dart';
+import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 
 class PostWidget extends StatelessWidget {
@@ -46,12 +54,15 @@ class PostWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // user image
-              UserImage(
-                userImage: postModel.userImage,
-                size: 50,
+              UserImageTap(
+                userId: postModel.uId,
+                child: UserImage(
+                  userImage: postModel.userImage,
+                  size: 50,
+                ),
               ),
               const SizedBox(width: 11),
+
               // name and date
               Expanded(
                 child: Column(
@@ -89,12 +100,71 @@ class PostWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 3),
+
               // icon more
-              Icon(
-                Icons.more_horiz,
-                color: Colors.grey[600],
-                size: 19,
-              ),
+              if (postModel.uId == uId)
+                CustomPopupMenu(
+                  items: [
+                    customPopupMenuItem(
+                      icon: Icons.edit,
+                      title: 'edit',
+                    ),
+                    customPopupMenuItem(
+                      icon: Icons.delete_outline,
+                      title: 'delete',
+                    ),
+                  ],
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'edit':
+                        {
+                          push(
+                            context,
+                            EditPostScreen(
+                              postModel: postModel,
+                            ),
+                          );
+                        }
+                        break;
+
+                      case 'delete':
+                        {
+                          showCustomDialog(
+                              context: context,
+                              title:
+                                  'Are you sure you want to delete this post?',
+                              content: const Text(
+                                  'When delete this post you cannot undo this action.'),
+                              buttons: [
+                                DialogButton(
+                                  title: 'delete',
+                                  onPressed: () {
+                                    SocialCubit.get(context)
+                                        .deletePost(
+                                      postModel: postModel,
+                                    )
+                                        .then((value) {
+                                      snkBar(
+                                        context: context,
+                                        title: 'Post deleted successfully',
+                                      );
+                                    });
+
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                DialogButton(
+                                  title: 'cancel',
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ]);
+                        }
+                        break;
+                    }
+                  },
+                ),
             ],
           ),
           const SizedBox(height: 11),

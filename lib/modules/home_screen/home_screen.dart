@@ -2,7 +2,7 @@
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
 import 'package:shop_app/modules/publish_post_screen/publish_post_screen.dart';
-import 'package:shop_app/shared/components/components/posts/post_widget.dart';
+import 'package:shop_app/shared/components/components/post_widget/post_widget.dart';
 import 'package:shop_app/shared/components/components/push/push.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -101,7 +101,9 @@ class HomeScreen extends StatelessWidget {
                   // posts
                   ListView.separated(
                     itemBuilder: (context, index) {
-                      return PostWidget(postModel: cubit.posts[index]);
+                      return PostWidget(
+                        postModel: cubit.posts[index],
+                      );
                     },
                     separatorBuilder: (context, index) =>
                     const SizedBox(height: 8),
