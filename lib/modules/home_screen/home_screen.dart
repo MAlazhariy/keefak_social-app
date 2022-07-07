@@ -68,15 +68,15 @@ class HomeScreen extends StatelessWidget {
                               width: double.maxFinite,
                               height: 45,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Colors.grey[200],
                                 borderRadius: BorderRadius.circular(50),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Colors.grey[400]!,
-                                    blurRadius: 3,
-                                    offset: const Offset(0, 1.5),
-                                  ),
-                                ],
+                                // boxShadow: <BoxShadow>[
+                                //   BoxShadow(
+                                //     color: Colors.grey[400]!,
+                                //     blurRadius: 3,
+                                //     offset: const Offset(0, 1.5),
+                                //   ),
+                                // ],
                               ),
                               alignment: AlignmentDirectional.centerStart,
                               child: Padding(

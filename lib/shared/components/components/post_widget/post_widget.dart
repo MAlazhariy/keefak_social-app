@@ -19,9 +19,11 @@ class PostWidget extends StatelessWidget {
   const PostWidget({
     Key? key,
     required this.postModel,
+    this.userImageClickable = true,
   }) : super(key: key);
 
   final PostModel postModel;
+  final bool userImageClickable;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +62,7 @@ class PostWidget extends StatelessWidget {
                   userImage: postModel.userImage,
                   size: 50,
                 ),
+                enabled: userImageClickable,
               ),
               const SizedBox(width: 11),
 

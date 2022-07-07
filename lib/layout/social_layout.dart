@@ -1,8 +1,8 @@
-
 import 'dart:developer';
 
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
+import 'package:shop_app/shared/components/components/snack_bar.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,21 +21,24 @@ class SocialLayout extends StatelessWidget {
           appBar: AppBar(
             title: Text(cubit.titles[cubit.currentIndex]),
             actions: [
+              // IconButton(
+              //   onPressed: () {},
+              //   icon: const Icon(IconBroken.Notification),
+              // ),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(IconBroken.Notification),
-              ),
-              IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  snkBar(
+                    context: context,
+                    title: 'أنا مبعملش حاجة 😜',
+                  );
+                },
                 icon: const Icon(IconBroken.Search),
               ),
             ],
           ),
-
           body: cubit.userModel != null
               ? cubit.screens[cubit.currentIndex]
               : const Center(child: CircularProgressIndicator()),
-
           bottomNavigationBar: BottomNavigationBar(
             onTap: (index) {
               cubit.changeNavBar(index);
