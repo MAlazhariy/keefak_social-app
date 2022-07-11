@@ -1,8 +1,6 @@
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
-import 'package:shop_app/models/user_model.dart';
 import 'package:shop_app/modules/chatting_screen/chatting_screen.dart';
-import 'package:shop_app/modules/publish_post_screen/publish_post_screen.dart';
 import 'package:shop_app/shared/components/components/post_widget/post_widget.dart';
 import 'package:shop_app/shared/components/components/push/push.dart';
 import 'package:flutter/material.dart';
@@ -22,19 +20,22 @@ class UserProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = SocialCubit.get(context);
+    if (userId != uId) {
+      cubit.getUserIfNotExists(userId);
+    }
 
     return BlocConsumer<SocialCubit, SocialStates>(
       listener: (context, state) {},
       builder: (context, state) {
-        final userExists = userId == uId ||
-            cubit.users.where((user) => user.uId == userId).isNotEmpty;
+        final userExists = (userId == uId || cubit.userExists(userId));
 
         if (userExists) {
           final user = userId == uId
               ? cubit.userModel
-              : cubit.users.singleWhere((user) => user.uId == userId);
+              : cubit.users.firstWhere((user) => user.uId == userId);
 
-          final userPosts = cubit.posts.where((post) => post.uId == userId).toList();
+          final userPosts =
+              cubit.posts.where((post) => post.uId == userId).toList();
 
           return Scaffold(
             appBar: AppBar(
@@ -181,11 +182,20 @@ class UserProfileScreen extends StatelessWidget {
               ),
             ),
           );
+        } else if (state is SocialGetUserErrorState) {
+          return Scaffold(
+            body: Center(
+              child: Text(
+                state.error,
+              ),
+            ),
+          );
         }
 
-        cubit.getAllUsers();
-        return const Center(
-          child: CircularProgressIndicator(),
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
         );
       },
     );

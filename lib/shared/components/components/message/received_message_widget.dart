@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/models/message_model.dart';
+import 'package:shop_app/models/message_model/message_model.dart';
 
 class ReceivedMessageWidget extends StatelessWidget {
   const ReceivedMessageWidget(

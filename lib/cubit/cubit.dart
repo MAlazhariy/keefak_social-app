@@ -1,14 +1,14 @@
-
 import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shop_app/helpers/get_image_name.dart';
-import 'package:shop_app/models/comment_model.dart';
-import 'package:shop_app/models/message_model.dart';
+import 'package:shop_app/layout/social_layout.dart';
+import 'package:shop_app/models/comment_model/comment_model.dart';
+import 'package:shop_app/models/message_model/message_model.dart';
 import 'package:shop_app/models/post_model/post_model.dart';
 import 'package:shop_app/models/post_model/publish_post_model.dart';
-import 'package:shop_app/models/user_model.dart';
+import 'package:shop_app/models/user_model/user_model.dart';
 import 'package:shop_app/cubit/states.dart';
 import 'package:shop_app/modules/chats_screen/chats_screen.dart';
 import 'package:shop_app/modules/home_screen/home_screen.dart';
@@ -44,7 +44,7 @@ class SocialCubit extends Cubit<SocialStates> {
   List<UserModel> users = [];
   Map<String, List<MessageModel>?> chats = {};
 
-  bool showCommentSendButton = false;
+  bool showSendButton = false;
 
   List<Widget> screens = [
     const HomeScreen(),
@@ -59,21 +59,8 @@ class SocialCubit extends Cubit<SocialStates> {
   ];
 
   void changeSendButtonVisibility(String text) {
-    showCommentSendButton = text.isNotEmpty;
+    showSendButton = text.isNotEmpty;
     emit(SocialChangeSendButtonVisibilityState());
-  }
-
-  Future<void> getUserData() async {
-    emit(SocialGetUserLoadingState());
-
-    FirebaseFirestore.instance.collection('users').doc(uId).get().then((value) {
-      userModel = UserModel.fromJson(value.data()!);
-      // log(userModel.toMap().toString());
-      emit(SocialGetUserSuccessState());
-    }).catchError((error) {
-      log('error when getUserData: ${error.toString()}');
-      emit(SocialGetUserErrorState(error.toString()));
-    });
   }
 
   void changeNavBar(int index) {
@@ -82,6 +69,14 @@ class SocialCubit extends Cubit<SocialStates> {
     }
     currentIndex = index;
     emit(SocialChangeBottomNavState());
+  }
+
+  void navigateToChatsScreen(BuildContext context) {
+    currentIndex = 1;
+    pushAndFinish(
+      context,
+      const SocialLayout(),
+    );
   }
 
   Future<void> getCoverImage(BuildContext context) async {
@@ -254,7 +249,7 @@ class SocialCubit extends Cubit<SocialStates> {
     });
   }
 
-  void typingPost(){
+  void typingPost() {
     emit(SocialTypingPostState());
   }
 
@@ -500,7 +495,7 @@ class SocialCubit extends Cubit<SocialStates> {
         .then((_) {
       // add comment to post model
       postModel.comments!.add(commentModel);
-      showCommentSendButton = false;
+      showSendButton = false;
       emit(SocialCommentPostSuccessState());
     }).catchError((error) {
       log('error when commentPost: ${error.toString()}');
@@ -518,10 +513,13 @@ class SocialCubit extends Cubit<SocialStates> {
     emit(SocialLogoutState());
   }
 
-  void getAllUsers() {
+  Future<void> getAllUsers() async {
     emit(SocialGetAllUsersLoadingState());
 
-    FirebaseFirestore.instance.collection('users').get().then((value) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .get()
+        .then((value) async {
       for (var user in value.docs) {
         if (user.id != uId) {
           users.add(
@@ -538,20 +536,68 @@ class SocialCubit extends Cubit<SocialStates> {
     });
   }
 
+  Future<void> getCurrentUserData() async {
+    emit(SocialGetCurrentUserLoadingState());
+
+    FirebaseFirestore.instance.collection('users').doc(uId).get().then((value) {
+      userModel = UserModel.fromJson(value.data()!);
+      // log(userModel.toMap().toString());
+      emit(SocialGetCurrentUserSuccessState());
+    }).catchError((error) {
+      log('error when getUserData: ${error.toString()}');
+      emit(SocialGetCurrentUserErrorState(error.toString()));
+    });
+  }
+
+  bool userExists(String uId) {
+    return users.where((user) => user.uId == uId).isNotEmpty;
+  }
+
+  Future<void> getUser({
+    required String userId,
+  }) async {
+    emit(SocialGetUserLoadingState());
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get()
+        .then((user) {
+      log(user.data().toString());
+
+      users.add(
+        UserModel.fromJson(
+          user.data()!,
+        ),
+      );
+      emit(SocialGetUserSuccessState());
+    }).catchError((error) {
+      log('error when getUser: ${error.toString()}');
+      emit(SocialGetUserErrorState(error.toString()));
+    });
+  }
+
+  Future<void> getUserIfNotExists(String uId) async {
+    if (!userExists(uId)) {
+      getUser(userId: uId);
+    } else {
+      emit(SocialGetUserSuccessState());
+    }
+  }
+
   void sendMessage(MessageModel messageModel) {
     // add to my collection
     FirebaseFirestore.instance
-    .collection('users')
-    .doc(userModel!.uId)
-    .collection('chats')
-    .doc(messageModel.receiverId)
-    .collection('messages')
-    .doc()
-    .set(messageModel.toMap())
-    .then((value) {
+        .collection('users')
+        .doc(userModel!.uId)
+        .collection('chats')
+        .doc(messageModel.receiverId)
+        .collection('messages')
+        .doc()
+        .set(messageModel.toMap())
+        .then((value) {
       emit(SocialSendMessageSuccessState());
-    })
-    .catchError((error){
+    }).catchError((error) {
       emit(SocialSendMessageErrorState(error.toString()));
     });
 
@@ -566,8 +612,7 @@ class SocialCubit extends Cubit<SocialStates> {
         .set(messageModel.toMap())
         .then((value) {
       emit(SocialSendMessageSuccessState());
-    })
-        .catchError((error){
+    }).catchError((error) {
       emit(SocialSendMessageErrorState(error.toString()));
     });
   }
@@ -584,12 +629,12 @@ class SocialCubit extends Cubit<SocialStates> {
         .snapshots()
         .listen((event) {
       chats[receiverId] = [];
-      for(var doc in event.docs){
+      for (var doc in event.docs) {
         var model = MessageModel.fromJson(doc.data());
 
         chats.update(
           receiverId, // message id
-              (value) {
+          (value) {
             if (value != null) {
               value.add(model);
               return value;

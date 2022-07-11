@@ -39,7 +39,7 @@ class SocialLoginScreen extends StatelessWidget {
               titleColor: Colors.white,
             );
           } else if (state is SocialLoginSuccessful) {
-            SocialCubit.get(context).getUserData();
+            SocialCubit.get(context).getCurrentUserData();
             pushAndFinish(
               context,
               const SocialLayout(),

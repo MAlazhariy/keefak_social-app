@@ -6,12 +6,12 @@ class SocialChangeSendButtonVisibilityState extends SocialStates {}
 class SocialChangeBottomNavState extends SocialStates {}
 
 /// get user data
-class SocialGetUserLoadingState extends SocialStates {}
-class SocialGetUserSuccessState extends SocialStates {}
-class SocialGetUserErrorState extends SocialStates {
+class SocialGetCurrentUserLoadingState extends SocialStates {}
+class SocialGetCurrentUserSuccessState extends SocialStates {}
+class SocialGetCurrentUserErrorState extends SocialStates {
   final String error;
 
-  SocialGetUserErrorState(this.error);
+  SocialGetCurrentUserErrorState(this.error);
 }
 
 /// get posts
@@ -161,6 +161,15 @@ class SocialGetAllUsersErrorState extends SocialStates {
   final String error;
 
   SocialGetAllUsersErrorState(this.error);
+}
+
+/// get user
+class SocialGetUserLoadingState extends SocialStates {}
+class SocialGetUserSuccessState extends SocialStates {}
+class SocialGetUserErrorState extends SocialStates {
+  final String error;
+
+  SocialGetUserErrorState(this.error);
 }
 
 /// chats

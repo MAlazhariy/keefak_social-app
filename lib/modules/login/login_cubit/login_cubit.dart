@@ -62,7 +62,7 @@ class SocialLoginCubit extends Cubit<SocialLoginStates> {
       uId = value.user!.uid;
       value.user!.sendEmailVerification();
       var cubit = SocialCubit();
-      await cubit.getUserData();
+      await cubit.getCurrentUserData();
       if(cubit.userModel?.token != token){
         FirebaseFirestore.instance.collection('users').doc(uId).update({
           'token': token,

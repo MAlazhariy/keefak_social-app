@@ -49,3 +49,4 @@ app.*.map.json
 /android/app/google-services.json
 /android/*.jks
 /ios/Runner/GoogleService-Info.plist
+/lib/helpers/firebase_app_key.dart

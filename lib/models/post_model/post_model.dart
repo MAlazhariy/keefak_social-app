@@ -1,4 +1,4 @@
-import 'package:shop_app/models/comment_model.dart';
+import 'package:shop_app/models/comment_model/comment_model.dart';
 import 'package:shop_app/models/post_model/publish_post_model.dart';
 
 class PostModel extends PublishPostModel {

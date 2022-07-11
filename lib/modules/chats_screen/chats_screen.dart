@@ -1,4 +1,4 @@
-import 'package:shop_app/models/user_model.dart';
+import 'package:shop_app/models/user_model/user_model.dart';
 import 'package:shop_app/modules/chatting_screen/chatting_screen.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
@@ -40,6 +40,7 @@ class ChatsScreen extends StatelessWidget {
     );
   }
 
+  // todo: users screen -> userBuilder component
   Widget userBuilder({
     required UserModel userModel,
     required BuildContext context,

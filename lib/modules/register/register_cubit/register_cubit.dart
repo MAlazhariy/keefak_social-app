@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shop_app/models/user_model.dart';
+import 'package:shop_app/models/user_model/user_model.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/modules/register/register_cubit/register_states.dart';
 import 'package:shop_app/shared/components/constants.dart';
