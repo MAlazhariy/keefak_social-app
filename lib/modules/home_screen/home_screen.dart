@@ -7,6 +7,8 @@ import 'package:shop_app/shared/components/components/push/push.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/shared/components/components/user_image/user_image.dart';
+import 'package:shop_app/shared/components/components/user_image_tap/user_image_tap.dart';
+import 'package:shop_app/shared/components/constants.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -46,9 +48,12 @@ class HomeScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         // user image
-                        UserImage(
-                          userImage: SocialCubit.get(context).userModel!.image,
-                          size: 45,
+                        UserImageTap(
+                          userId: uId,
+                          child: UserImage(
+                            userImage: SocialCubit.get(context).userModel!.image,
+                            size: 45,
+                          ),
                         ),
                         const SizedBox(width: 10),
 

@@ -392,6 +392,8 @@ class SocialCubit extends Cubit<SocialStates> {
         .orderBy('milSecEpoch', descending: true)
         .get()
         .then((value) async {
+          posts = [];
+
       for (int i = 0; i < value.docs.length; i++) {
         var postDoc = value.docs[i];
 
@@ -444,6 +446,67 @@ class SocialCubit extends Cubit<SocialStates> {
       log('error when getPosts: ${error.toString()}');
       emit(SocialGetPostsErrorState(error.toString()));
     });
+  }
+
+  Future<PostModel?> getPost(String postId) async {
+    // return post if it exists
+    final index = posts.indexWhere((post) => post.postId == postId);
+    if (index != -1) {
+      return posts[index];
+    }
+
+    // get post from Firebase if not exists
+    PostModel? model;
+
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .get()
+        .then((postDoc) async {
+      // get likes
+      await postDoc.reference
+          .collection('likes')
+          .where('like', isEqualTo: true)
+          .get()
+          .then((likeValue) {
+        model = PostModel.fromJson(
+          json: postDoc.data()!,
+          postId: postDoc.id,
+          likes: likeValue.docs.map((e) => e.id).toList(),
+        );
+      }).catchError((error) {
+        log('error when get post likes: ${error.toString()}');
+      });
+
+      // get comments
+      await postDoc.reference
+          .collection('comments')
+          .orderBy('milSecEpoch', descending: false)
+          .get()
+          .then((commentValue) {
+        model!.comments = [];
+
+        for (var commentDoc in commentValue.docs) {
+          model!.comments!.add(
+            CommentModel(
+              comment: commentDoc.data()['comment'],
+              uId: commentDoc.data()['uId'],
+              name: commentDoc.data()['name'],
+              userImage: commentDoc.data()['userImage'],
+              milSecEpoch: commentDoc.data()['milSecEpoch'],
+            ),
+          );
+        }
+      }).catchError((error) {
+        log('error when get post comments: ${error.toString()}');
+      });
+
+      emit(SocialGetSinglePostSuccessState());
+
+      return model;
+    });
+
+    return null;
   }
 
   Future<void> likePost({

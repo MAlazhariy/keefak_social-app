@@ -1,9 +1,16 @@
+import 'dart:developer';
+
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/cubit/states.dart';
 import 'package:shop_app/helpers/dismiss_keyboard.dart';
+import 'package:shop_app/models/notifications/notification_comment_model/notification_comment_model.dart';
 import 'package:shop_app/models/post_model/post_model.dart';
+import 'package:shop_app/modules/show_post_image_screen/post_image_screen.dart';
 import 'package:shop_app/shared/components/components/comment/comment_widget.dart';
+import 'package:shop_app/shared/components/components/push/push.dart';
 import 'package:shop_app/shared/components/components/user_image/user_image.dart';
+import 'package:shop_app/shared/components/constants.dart';
+import 'package:shop_app/shared/network/remote/dio_helper.dart';
 import 'package:shop_app/shared/styles/icon_broken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -139,17 +146,27 @@ class CommentsScreen extends StatelessWidget {
                         const SizedBox(height: 5),
                         // post image
                         if (postModel.postImage.isNotEmpty)
-                          Container(
-                            width: double.maxFinite,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  postModel.postImage,
+                          GestureDetector(
+                            onTap: () {
+                              push(
+                                context,
+                                ShowPostImageScreen(
+                                  image: postModel.postImage,
                                 ),
-                                fit: BoxFit.cover,
+                              );
+                            },
+                            child: Container(
+                              width: double.maxFinite,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    postModel.postImage,
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
 
@@ -248,7 +265,7 @@ class CommentsScreen extends StatelessWidget {
                   ),
                 ),
 
-                // add a comment
+                // Send a comment
                 Row(
                   children: [
                     UserImage(
@@ -268,21 +285,48 @@ class CommentsScreen extends StatelessWidget {
                         keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Write a comment ..',
+                          hintText: 'Write a comment..',
                         ),
                       ),
                     ),
-                    if (cubit.showCommentSendButton)
+                    if (cubit.showSendButton)
                       MaterialButton(
-                        onPressed: () {
+                        onPressed: () async {
                           dismissKeyboard(context);
-
+                          // comment
                           cubit.commentOnPost(
                             comment: commentController.text.trim(),
                             postModel: postModel,
                           ).then((value) {
                             commentController.text = '';
                           });
+
+                          /// push FCM to post publisher
+                          // check if post publisher is not the current user
+                          if(postModel.uId != uId){
+
+                            final _nModel = NotificationCommentModel(
+                              senderName: cubit.userModel!.name,
+                              senderComment: commentController.text.trim(),
+                              senderUId: cubit.userModel!.uId,
+                              postId: postModel.postId,
+                            );
+
+                            // get user from Firebase if not exists in [users]
+                            cubit.getUserIfNotExists(postModel.uId);
+
+                            final String _userToken = cubit.users.firstWhere((user) => user.uId == postModel.uId).token;
+
+
+                            DioHelper.pushFCM(
+                              to: _userToken,
+                              title: '${_nModel.senderName} commented on your post: (${postModel.text.padRight(12,'')}..)',
+                              body: 'comment: ${_nModel.senderComment}',
+                              data: _nModel.toMap(),
+                            ).then((value) {
+                              log('notification sent to ${postModel.name}');
+                            });
+                          }
                         },
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         minWidth: 0,

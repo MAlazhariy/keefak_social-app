@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:shop_app/models/comment_model.dart';
+import 'package:shop_app/models/comment_model/comment_model.dart';
 import 'package:shop_app/shared/components/components/user_image/user_image.dart';
 
 class CommentWidget extends StatelessWidget {

@@ -187,12 +187,10 @@ class PostWidget extends StatelessWidget {
           if (postModel.postImage.isNotEmpty)
             GestureDetector(
               onTap: () {
-                Navigator.push(
+                push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => ShowPostImageScreen(
-                      image: postModel.postImage,
-                    ),
+                  ShowPostImageScreen(
+                    image: postModel.postImage,
                   ),
                 );
               },

@@ -190,7 +190,7 @@ class ChattingScreen extends StatelessWidget {
                             final _nModel = NotificationMessageModel(
                               senderName: cubit.userModel!.name,
                               senderMessage: messageController.text.trim(),
-                              senderUid: cubit.userModel!.uId,
+                              senderUId: cubit.userModel!.uId,
                             );
 
                             DioHelper.pushFCM(

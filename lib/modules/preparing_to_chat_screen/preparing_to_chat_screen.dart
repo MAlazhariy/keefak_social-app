@@ -25,7 +25,7 @@ class _PreparingToChatScreenState extends State<PreparingToChatScreen> {
     super.initState();
 
     SocialCubit.get(context)
-        .getUserIfNotExists(widget.nModel.senderUid)
+        .getUserIfNotExists(widget.nModel.senderUId)
         .then((value) {
       setState(() {});
     });
@@ -35,16 +35,16 @@ class _PreparingToChatScreenState extends State<PreparingToChatScreen> {
   Widget build(BuildContext context) {
     final cubit = SocialCubit.get(context);
 
-    if (cubit.userExists(widget.nModel.senderUid)) {
+    if (cubit.userExists(widget.nModel.senderUId)) {
       final UserModel user = cubit.users.firstWhere(
-        (user) => user.uId == widget.nModel.senderUid,
+        (user) => user.uId == widget.nModel.senderUId,
       );
 
       log(user.toMap().toString());
 
       return ChattingScreen(user: user);
     } else {
-      cubit.getUserIfNotExists(widget.nModel.senderUid).then((_) {
+      cubit.getUserIfNotExists(widget.nModel.senderUId).then((_) {
         setState(() {});
       });
     }
