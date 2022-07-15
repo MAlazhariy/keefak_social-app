@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shop_app/layout/social_layout.dart';
 import 'package:shop_app/cubit/cubit.dart';
@@ -5,12 +7,26 @@ import 'package:shop_app/modules/login/login_cubit/login_cubit.dart';
 import 'package:shop_app/modules/login/login_cubit/login_states.dart';
 import 'package:shop_app/modules/register/social_register_screen.dart';
 import 'package:shop_app/shared/components/components/custom_white_text_form.dart';
+import 'package:shop_app/shared/components/components/login_button/login_button.dart';
 import 'package:shop_app/shared/components/components/push/push_and_finish.dart';
 import 'package:shop_app/shared/components/components/snack_bar.dart';
 import 'package:shop_app/shared/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+void snkBarOnError({
+  required BuildContext context,
+  required String error,
+}) {
+  snkBar(
+    context: context,
+    title: error,
+    snackColor: Colors.red,
+    titleColor: Colors.white,
+    seconds: 6,
+  );
+}
 
 class SocialLoginScreen extends StatelessWidget {
   SocialLoginScreen({Key? key}) : super(key: key);
@@ -31,15 +47,22 @@ class SocialLoginScreen extends StatelessWidget {
       create: (context) => SocialLoginCubit(),
       child: BlocConsumer<SocialLoginCubit, SocialLoginStates>(
         listener: (context, state) {
+          log('state: ${state.runtimeType}');
+
           if (state is SocialLoginError) {
-            snkBar(
+            snkBarOnError(
               context: context,
-              title: state.error,
-              snackColor: Colors.red,
-              titleColor: Colors.white,
+              error: state.error,
             );
-          } else if (state is SocialLoginSuccessful) {
-            SocialCubit.get(context).getCurrentUserData();
+          } else if (state is SocialLoginWithGoogleError) {
+            snkBarOnError(
+              context: context,
+              error: state.error,
+            );
+          } else if (state is SocialLoginSuccessful ||
+              state is SocialLoginWithGoogleSuccessful) {
+            // insure that the user exists before navigating to home layout
+            SocialCubit.get(context).getCurrentUserIfNotExists();
             pushAndFinish(
               context,
               const SocialLayout(),
@@ -58,7 +81,7 @@ class SocialLoginScreen extends StatelessWidget {
                 children: [
                   Container(
                     alignment: Alignment.bottomCenter,
-                    height: 240,
+                    height: 180,
                     child: SvgPicture.asset(
                       'assets/images/test.svg',
                       fit: BoxFit.cover,
@@ -179,8 +202,7 @@ class SocialLoginScreen extends StatelessWidget {
                                   right: 2.5,
                                   top: 3.0,
                                 ),
-                                // ignore: deprecated_member_use
-                                child: RaisedButton(
+                                child: MaterialButton(
                                   onPressed: () {
                                     cubit.changeShowPassword();
                                   },
@@ -222,75 +244,73 @@ class SocialLoginScreen extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(
-                            height: 40,
+                            height: 10,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // ignore: deprecated_member_use
-                              RaisedButton(
-                                onPressed: () {
-                                  if (formKey.currentState!.validate()) {
-                                    cubit.login(
-                                      email: emailController.text,
-                                      password: passwordController.text,
-                                    );
-                                  }
-                                },
-                                padding: const EdgeInsets.all(0),
-                                shape: const StadiumBorder(),
-                                highlightElevation: 5,
-                                highlightColor: kRedColor.withAlpha(50),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        (state is! SocialLoginLoading)
-                                            ? const Color(0XFFFF4AA3)
-                                            : const Color(0XFFFF4AA3)
-                                                .withAlpha(90),
-                                        (state is! SocialLoginLoading)
-                                            ? const Color(0XFFF8B556)
-                                            : const Color(0XFFF8B556)
-                                                .withAlpha(90),
-                                      ],
-                                      begin: Alignment.centerRight,
-                                      end: Alignment.centerLeft,
-                                    ),
-                                    borderRadius: BorderRadius.circular(50),
+                          Align(
+                            alignment: Alignment.center,
+                            child: MaterialButton(
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  cubit.login(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                  );
+                                }
+                              },
+                              padding: const EdgeInsets.all(0),
+                              shape: const StadiumBorder(),
+                              highlightElevation: 5,
+                              highlightColor: kRedColor.withAlpha(50),
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      (state is! SocialLoginLoading)
+                                          ? const Color(0XFFFF4AA3)
+                                          : const Color(0XFFFF4AA3)
+                                              .withAlpha(90),
+                                      (state is! SocialLoginLoading)
+                                          ? const Color(0XFFF8B556)
+                                          : const Color(0XFFF8B556)
+                                              .withAlpha(90),
+                                    ],
+                                    begin: Alignment.centerRight,
+                                    end: Alignment.centerLeft,
                                   ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 15,
-                                      horizontal: 50,
-                                    ),
-                                    child: (state is! SocialLoginLoading)
-                                        ? Text(
-                                            'LOGIN',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline2!
-                                                .copyWith(
-                                                  color: Colors.white,
-                                                  fontSize: 19.5,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                          )
-                                        : const Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 22.4),
-                                            child: SizedBox(
-                                              height: 23,
-                                              width: 23,
-                                              child: CircularProgressIndicator(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                    horizontal: 50,
+                                  ),
+                                  child: (state is! SocialLoginLoading)
+                                      ? Text(
+                                          'LOGIN',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline2!
+                                              .copyWith(
                                                 color: Colors.white,
-                                                strokeWidth: 3.5,
+                                                fontSize: 19.5,
+                                                fontWeight: FontWeight.w600,
                                               ),
+                                        )
+                                      : const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 22.4),
+                                          child: SizedBox(
+                                            height: 23,
+                                            width: 23,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 3.5,
                                             ),
                                           ),
-                                  ),
+                                        ),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
                           const SizedBox(height: 7),
                           Row(
@@ -326,6 +346,30 @@ class SocialLoginScreen extends StatelessWidget {
                                 ),
                               ),
                             ],
+                          ),
+                          // Align(
+                          //   alignment: Alignment.center,
+                          //   child: GestureDetector(
+                          //     onTap: () {
+                          //       cubit.loginWithGoogle();
+                          //     },
+                          //     child: Image.network(
+                          //       'https://onymos.com/wp-content/uploads/2020/10/google-signin-button-1024x260.png',
+                          //       width: 250,
+                          //     ),
+                          //   ),
+                          // ),
+
+                          const SizedBox(height: 8),
+
+                          LoginWithButton(
+                            title: 'Sign in with Google',
+                            onPressed: (){
+                              cubit.loginWithGoogle();
+                            },
+                            logo: 'google',
+                            color: Colors.white,
+                            textColor: Colors.redAccent,
                           ),
                         ],
                       ),

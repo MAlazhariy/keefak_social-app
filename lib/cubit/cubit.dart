@@ -567,8 +567,13 @@ class SocialCubit extends Cubit<SocialStates> {
   }
 
   void logout(BuildContext context) {
+    // remove uId from db
     CacheHelper.removeSocialUId();
+    // remove uId value from global var
     uId = '';
+    // remove userModel value
+    userModel = null;
+    // navigate to Login screen
     pushAndFinish(
       context,
       SocialLoginScreen(),
@@ -599,6 +604,12 @@ class SocialCubit extends Cubit<SocialStates> {
     });
   }
 
+  Future<void> getCurrentUserIfNotExists() async {
+    if(userModel == null){
+      await getCurrentUserData();
+    }
+  }
+
   Future<void> getCurrentUserData() async {
     emit(SocialGetCurrentUserLoadingState());
 
@@ -616,7 +627,7 @@ class SocialCubit extends Cubit<SocialStates> {
     return users.where((user) => user.uId == uId).isNotEmpty;
   }
 
-  Future<void> getUser({
+  Future<void> getAndAddUser({
     required String userId,
   }) async {
     emit(SocialGetUserLoadingState());
@@ -642,7 +653,7 @@ class SocialCubit extends Cubit<SocialStates> {
 
   Future<void> getUserIfNotExists(String uId) async {
     if (!userExists(uId)) {
-      getUser(userId: uId);
+      getAndAddUser(userId: uId);
     } else {
       emit(SocialGetUserSuccessState());
     }

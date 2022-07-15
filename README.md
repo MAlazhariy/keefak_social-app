@@ -2,11 +2,10 @@
 
 Keefak is a simple social app for posting and chatting using Flutter with FireBase.
 
-
 ## content
+
 - [Skills used in the project](#skills-used-in-the-project)
 - [Screenshots](#screenshots)
-
 
 ## Skills used in the project:
 
@@ -14,24 +13,22 @@ Keefak is a simple social app for posting and chatting using Flutter with FireBa
 - Firebase Firestore
 - Firebase Storage
 - Firebase Authentication
+    - Authenticate with Email/Password
+    - Social Authentication
+        - Authenticate with Google
 - Firebase Cloud Messaging *(FCM)*
-- FCM using REST API (working on..)
+- FCM using REST API
 - OOP
 - Clean code
 - Bloc state management (Cubit)
 - Google play console
-- SOLID principles
-    - Single responsibility
-    - Open-closed
-    - Liskov substitution 
 - Model class
-- Native splash screen
+- Native splash screen (working on ..)
 - Graphic design
     - UX & UI principles
     - Logo design
 
-
 ## Screenshots:
 
-working on it ...
+working on ...
 

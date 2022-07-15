@@ -59,6 +59,7 @@ void main() async {
   await Firebase.initializeApp();
 
   token = await FirebaseMessaging.instance.getToken() ?? '';
+  log('token = "$token"');
   uId = CacheHelper.getSocialUId();
 
   FirebaseMessaging.onMessage.listen((event) {
@@ -88,7 +89,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => SocialCubit()
             ..getPosts()
-            ..getCurrentUserData(),
+            ..getCurrentUserIfNotExists(),
         ),
       ],
       child: MaterialApp(
@@ -97,7 +98,7 @@ class MyApp extends StatelessWidget {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: ThemeMode.light,
-        home: uId.isEmpty ? SocialLoginScreen() : const SocialLayout(),
+        home: uId.isNotEmpty ? const SocialLayout() : SocialLoginScreen(),
       ),
     );
   }

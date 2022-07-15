@@ -33,6 +33,20 @@ class UserModel {
     token = json['token'];
   }
 
+  // pass by value
+  UserModel.cloneFromModel(UserModel model) {
+    email = model.email;
+    name = model.name;
+    phone = model.phone;
+    uId = model.uId;
+    image = model.image;
+    cover = model.cover;
+    bio = model.bio;
+    isEmailVerified = model.isEmailVerified;
+    token = model.token;
+  }
+
+
   Map<String, dynamic> toMap() {
     return {
       'email': email,

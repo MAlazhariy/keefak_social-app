@@ -96,7 +96,7 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
     // save uid in cache
     CacheHelper.setSocialUId(uId);
 
-    // save uid in global var
+    // save uid in the global var
     uId = uId;
     SocialCubit.get(context).userModel = UserModel.fromJson(userModel.toMap());
 
