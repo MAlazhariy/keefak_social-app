@@ -59,8 +59,14 @@ class SocialLoginScreen extends StatelessWidget {
               context: context,
               error: state.error,
             );
+          } else if (state is SocialLoginWithFacebookError) {
+            snkBarOnError(
+              context: context,
+              error: state.error,
+            );
           } else if (state is SocialLoginSuccessful ||
-              state is SocialLoginWithGoogleSuccessful) {
+              state is SocialLoginWithGoogleSuccessful ||
+              state is SocialLoginWithFacebookSuccessful) {
             // insure that the user exists before navigating to home layout
             SocialCubit.get(context).getCurrentUserIfNotExists();
             pushAndFinish(
@@ -69,6 +75,7 @@ class SocialLoginScreen extends StatelessWidget {
             );
           }
         },
+
         builder: (context, state) {
           SocialLoginCubit cubit = SocialLoginCubit.get(context);
 
@@ -347,29 +354,29 @@ class SocialLoginScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          // Align(
-                          //   alignment: Alignment.center,
-                          //   child: GestureDetector(
-                          //     onTap: () {
-                          //       cubit.loginWithGoogle();
-                          //     },
-                          //     child: Image.network(
-                          //       'https://onymos.com/wp-content/uploads/2020/10/google-signin-button-1024x260.png',
-                          //       width: 250,
-                          //     ),
-                          //   ),
-                          // ),
 
+                          // login with Google
                           const SizedBox(height: 8),
-
                           LoginWithButton(
                             title: 'Sign in with Google',
-                            onPressed: (){
+                            onPressed: () {
                               cubit.loginWithGoogle();
                             },
                             logo: 'google',
                             color: Colors.white,
                             textColor: Colors.redAccent,
+                          ),
+
+                          // login with Facebook
+                          const SizedBox(height: 8),
+                          LoginWithButton(
+                            title: 'Sign in with Facebook',
+                            onPressed: () {
+                              cubit.loginWithFacebook();
+                            },
+                            logo: 'facebook',
+                            color: Colors.white,
+                            textColor: Colors.blueAccent,
                           ),
                         ],
                       ),

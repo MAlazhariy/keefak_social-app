@@ -18,7 +18,7 @@ class SocialLoginSuccessful extends SocialLoginStates {
   SocialLoginSuccessful(this.uId);
 }
 
-// login with google account
+// login with google
 class SocialLoginWithGoogleLoading extends SocialLoginStates{}
 class SocialLoginWithGoogleError extends SocialLoginStates{
   late final String error;
@@ -28,4 +28,16 @@ class SocialLoginWithGoogleSuccessful extends SocialLoginStates {
   final String uId;
 
   SocialLoginWithGoogleSuccessful(this.uId);
+}
+
+// login with Facebook
+class SocialLoginWithFacebookLoading extends SocialLoginStates{}
+class SocialLoginWithFacebookError extends SocialLoginStates{
+  late final String error;
+  SocialLoginWithFacebookError(this.error);
+}
+class SocialLoginWithFacebookSuccessful extends SocialLoginStates {
+  final String uId;
+
+  SocialLoginWithFacebookSuccessful(this.uId);
 }

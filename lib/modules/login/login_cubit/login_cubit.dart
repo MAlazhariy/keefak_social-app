@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/main.dart';
@@ -130,6 +131,52 @@ class SocialLoginCubit extends Cubit<SocialLoginStates> {
     });
   }
 
+  Future<void> loginWithFacebook() async {
+    // loading
+    emit(SocialLoginWithFacebookLoading());
+
+    // Trigger the sign-in flow
+    await FacebookAuth.instance.login().then((loginResult) async {
+
+      // Create a new credential
+      final credential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+      FirebaseAuth.instance
+          .signInWithCredential(credential)
+          .then((value) async {
+
+        final _user = value.user!;
+
+        // save uid in cache
+        CacheHelper.setSocialUId(_user.uid);
+        // save uid in global var
+        uId = _user.uid;
+
+        await createUserIfNotExists(
+          email: _user.email!,
+          name: _user.displayName!,
+          phone: _user.phoneNumber ?? '',
+          image: _user.photoURL ??
+              'https://img.freepik.com/free-vector/illustration-user-avatar-icon_53876-5907.jpg?w=740&t=st=1652066539~exp=1652067139~hmac=56c240665794b1798237d08ee1bdf76558858e666f86e98d001747b6ec5b1461',
+          cover:
+          'https://img.freepik.com/free-vector/hand-drawn-psychedelic-colorful-background_23-2149075812.jpg?w=900&t=st=1652084208~exp=1652084808~hmac=39bc5b885407fed98b7f70b82e221e00a6d31dd531d892337981a8929f74681c',
+          context: navigatorKey.currentState!.context,
+        ).then((value) {
+          emit(SocialLoginWithFacebookSuccessful(_user.uid));
+        }).catchError((error) {
+          log('--Error when createUserIfNotExists: ${error.toString()}');
+          emit(SocialLoginWithFacebookError(error.toString()));
+        });
+      }).catchError((error) {
+        log('--Error when loginWithFacebook: ${error.toString()}');
+        emit(SocialLoginWithFacebookError(error.toString()));
+      });
+    }).catchError((error) {
+      log('--Error when loginWithFacebook-GoogleSignIn() : ${error.toString()}');
+      emit(SocialLoginWithFacebookError(error.toString()));
+    });
+  }
+
   Future<void> createUserIfNotExists({
     required String email,
     required String name,
@@ -160,6 +207,7 @@ class SocialLoginCubit extends Cubit<SocialLoginStates> {
             'token': token,
           });
         }
+
       } else if (value.size == 0) {
         // create user model
         final _userModel = UserModel(
