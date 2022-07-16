@@ -566,9 +566,12 @@ class SocialCubit extends Cubit<SocialStates> {
     });
   }
 
-  void logout(BuildContext context) {
+  Future<void> logout(BuildContext context) async {
     // remove uId from db
     CacheHelper.removeSocialUId();
+    await FirebaseFirestore.instance.collection('users').doc(uId).update({
+      'token': '',
+    });
     // remove uId value from global var
     uId = '';
     // remove userModel value

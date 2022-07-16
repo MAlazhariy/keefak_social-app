@@ -218,7 +218,7 @@ class SocialLoginCubit extends Cubit<SocialLoginStates> {
           image: image,
           cover: cover,
           bio: '',
-          isEmailVerified: true,
+          isEmailVerified: false,
           token: token,
         );
 

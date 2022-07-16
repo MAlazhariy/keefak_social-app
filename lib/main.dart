@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shop_app/layout/social_layout.dart';
 import 'package:shop_app/cubit/cubit.dart';
 import 'package:shop_app/modules/login/login_screen.dart';
@@ -12,7 +13,6 @@ import 'package:shop_app/shared/styles/themes/dark_theme.dart';
 import 'package:shop_app/shared/styles/themes/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'models/notifications/notification_comment_model/notification_comment_model.dart';
@@ -23,7 +23,6 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> onBackgroundHandler(RemoteMessage message) async {
   log('onBackgroundMessage: ${message.data.toString()}');
   whenTapNotification(message);
-  // Fluttertoast.showToast(msg: 'onBackgroundMessage');
 }
 
 void whenTapNotification(RemoteMessage message) {
@@ -64,7 +63,18 @@ void main() async {
 
   FirebaseMessaging.onMessage.listen((event) {
     log('onMessage: ${event.data.toString()}');
-    whenTapNotification(event);
+
+    if (uId.isNotEmpty) {
+      if (event.data['type'] == 'message') {
+        final _nModel = NotificationMessageModel.fromJson(event.data);
+        Fluttertoast.showToast(msg: '${_nModel.senderName} send you a message');
+
+      } else if (event.data['type'] == 'comment') {
+        final _nModel = NotificationCommentModel.fromJson(event.data);
+        final String postText = SocialCubit.get(navigatorKey.currentContext).posts.where((post) => post.postId == _nModel.postId).first.text ?? '';
+        Fluttertoast.showToast(msg: '${_nModel.senderName} commented on your post: (${postText.padRight(12,'')}..)');
+      }
+    }
   });
 
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
