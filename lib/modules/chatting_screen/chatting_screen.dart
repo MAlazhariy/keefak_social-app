@@ -187,20 +187,22 @@ class ChattingScreen extends StatelessWidget {
                             cubit.sendMessage(_messageModel);
 
                             // send FCM
-                            final _nModel = NotificationMessageModel(
-                              senderName: cubit.userModel!.name,
-                              senderMessage: messageController.text.trim(),
-                              senderUId: cubit.userModel!.uId,
-                            );
+                            if (token != user.token && user.token.isNotEmpty) {
+                              final _nModel = NotificationMessageModel(
+                                senderName: cubit.userModel!.name,
+                                senderMessage: messageController.text.trim(),
+                                senderUId: cubit.userModel!.uId,
+                              );
 
-                            DioHelper.pushFCM(
-                              to: user.token,
-                              title: _nModel.senderName,
-                              body: _nModel.senderMessage,
-                              data: _nModel.toMap(),
-                            ).then((value) {
-                              log('notification sent to ${user.name}');
-                            });
+                              DioHelper.pushFCM(
+                                to: user.token,
+                                title: _nModel.senderName,
+                                body: _nModel.senderMessage,
+                                data: _nModel.toMap(),
+                              ).then((value) {
+                                log('notification sent to ${user.name}');
+                              });
+                            }
 
                             // reset text field
                             messageController.text = '';

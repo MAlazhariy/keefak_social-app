@@ -5,6 +5,7 @@ import 'package:shop_app/cubit/states.dart';
 import 'package:shop_app/helpers/dismiss_keyboard.dart';
 import 'package:shop_app/models/notifications/notification_comment_model/notification_comment_model.dart';
 import 'package:shop_app/models/post_model/post_model.dart';
+import 'package:shop_app/models/user_model/user_model.dart';
 import 'package:shop_app/modules/show_post_image_screen/post_image_screen.dart';
 import 'package:shop_app/shared/components/components/comment/comment_widget.dart';
 import 'package:shop_app/shared/components/components/push/push.dart';
@@ -315,17 +316,22 @@ class CommentsScreen extends StatelessWidget {
                             // get user from Firebase if not exists in [users]
                             cubit.getUserIfNotExists(postModel.uId);
 
-                            final String _userToken = cubit.users.firstWhere((user) => user.uId == postModel.uId).token;
+                            // push FCM
+                            final _user = cubit.users
+                                .firstWhere(
+                                    (user) => user.uId == postModel.uId);
 
-
-                            DioHelper.pushFCM(
-                              to: _userToken,
-                              title: '${_nModel.senderName} commented on your post: (${postModel.text.padRight(12,'')}..)',
-                              body: 'comment: ${_nModel.senderComment}',
-                              data: _nModel.toMap(),
-                            ).then((value) {
-                              log('notification sent to ${postModel.name}');
-                            });
+                            if(token != _user.token && _user.token.isNotEmpty){
+                              DioHelper.pushFCM(
+                                to: _user.token,
+                                title:
+                                    '${_nModel.senderName} commented on your post: (${postModel.text.padRight(12, '')}..)',
+                                body: 'comment: ${_nModel.senderComment}',
+                                data: _nModel.toMap(),
+                              ).then((value) {
+                                log('notification sent to ${postModel.name}');
+                              });
+                            }
                           }
                         },
                         padding: const EdgeInsets.symmetric(horizontal: 8),
