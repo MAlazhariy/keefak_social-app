@@ -38,6 +38,7 @@ class SocialLayout extends StatelessWidget {
           body: cubit.userModel != null
               ? cubit.screens[cubit.currentIndex]
               : const Center(child: CircularProgressIndicator()),
+
           bottomNavigationBar: BottomNavigationBar(
             onTap: (index) {
               cubit.changeNavBar(index);

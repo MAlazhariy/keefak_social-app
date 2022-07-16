@@ -71,7 +71,8 @@ void main() async {
 
       } else if (event.data['type'] == 'comment') {
         final _nModel = NotificationCommentModel.fromJson(event.data);
-        final String postText = SocialCubit.get(navigatorKey.currentContext).posts.where((post) => post.postId == _nModel.postId).first.text ?? '';
+        final  _posts = SocialCubit.get(navigatorKey.currentContext).posts.where((post) => post.postId == _nModel.postId).toList();
+        final String postText = _posts.isNotEmpty ? _posts.first.text : '';
         Fluttertoast.showToast(msg: '${_nModel.senderName} commented on your post: (${postText.padRight(12,'')}..)');
       }
     }
