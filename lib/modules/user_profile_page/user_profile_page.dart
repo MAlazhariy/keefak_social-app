@@ -43,141 +43,139 @@ class UserProfileScreen extends StatelessWidget {
             ),
             body: SafeArea(
               child: SingleChildScrollView(
-                child: Expanded(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          children: [
-                            // cover & profile pic
-                            Stack(
-                              alignment: Alignment.topCenter,
-                              children: [
-                                // cover
-                                Container(
-                                  width: double.maxFinite,
-                                  height: 170,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          // cover & profile pic
+                          Stack(
+                            alignment: Alignment.topCenter,
+                            children: [
+                              // cover
+                              Container(
+                                width: double.maxFinite,
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                      user.cover,
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              // profile picture
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 100,
+                                ),
+                                child: Container(
+                                  width: 130,
+                                  height: 130,
+                                  padding: const EdgeInsets.all(3),
                                   decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    ),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        user.cover,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: UserImage(
+                                    userImage: user.image,
                                   ),
                                 ),
-                                // profile picture
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 100,
-                                  ),
-                                  child: Container(
-                                    width: 130,
-                                    height: 130,
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: UserImage(
-                                      userImage: user.image,
-                                    ),
-                                  ),
-                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 11),
+                          // name
+                          Container(
+                            width: double.maxFinite,
+                            alignment: Alignment.center,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              user.name,
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: 23,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          // bio
+                          Container(
+                            width: double.maxFinite,
+                            alignment: Alignment.center,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              user.bio,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    if (user.uId != uId)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          MaterialButton(
+                            child: Column(
+                              children: const [
+                                Icon(IconBroken.Chat),
+                                Text('chat'),
                               ],
                             ),
-                            const SizedBox(height: 11),
-                            // name
-                            Container(
-                              width: double.maxFinite,
-                              alignment: Alignment.center,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                user.name,
-                                style: const TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 23,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            // bio
-                            Container(
-                              width: double.maxFinite,
-                              alignment: Alignment.center,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                user.bio,
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      if (user.uId != uId)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            MaterialButton(
-                              child: Column(
-                                children: const [
-                                  Icon(IconBroken.Chat),
-                                  Text('chat'),
-                                ],
-                              ),
-                              onPressed: () {
-                                push(
-                                  context,
-                                  ChattingScreen(user: user),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-
-                      const Divider(),
-                      Container(
-                        alignment: AlignmentDirectional.centerStart,
-                        padding: const EdgeInsetsDirectional.all(15),
-                        child: const Text(
-                          'posts',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            onPressed: () {
+                              push(
+                                context,
+                                ChattingScreen(user: user),
+                              );
+                            },
                           ),
-                        ),
+                        ],
                       ),
 
-                      // user posts
-                      ListView.separated(
-                        itemBuilder: (context, index) {
-                          return PostWidget(
-                            postModel: userPosts[index],
-                            userImageClickable: false,
-                          );
-                        },
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 8),
-                        itemCount: userPosts.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
+                    const Divider(),
+                    Container(
+                      alignment: AlignmentDirectional.centerStart,
+                      padding: const EdgeInsetsDirectional.all(15),
+                      child: const Text(
+                        'posts',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                    // user posts
+                    ListView.separated(
+                      itemBuilder: (context, index) {
+                        return PostWidget(
+                          postModel: userPosts[index],
+                          userImageClickable: false,
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
+                      itemCount: userPosts.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                    ),
+                  ],
                 ),
               ),
             ),
