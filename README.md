@@ -4,7 +4,7 @@ Keefak is a simple social app for posting and chatting using Flutter with FireBa
 
 ## content
 
-- [Features](#Features)
+- [Features](#features)
 - [Skills used in the project](#skills-used-in-the-project)
 - [Screenshots](#screenshots)
 
