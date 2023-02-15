@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-void pushAndFinish(
+Future<void> pushAndFinish(
     BuildContext context,
     Widget screen,
-    ) {
-  Navigator.pushAndRemoveUntil(
+    ) async {
+  await Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(
       builder: (context) => screen,

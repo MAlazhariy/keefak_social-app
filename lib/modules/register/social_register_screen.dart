@@ -211,7 +211,7 @@ class SocialRegisterScreen extends StatelessWidget {
                                   top: 3.0,
                                 ),
                                 // ignore: deprecated_member_use
-                                child: RaisedButton(
+                                child: MaterialButton(
                                   onPressed: () {
                                     cubit.changePasswordVisibility();
                                   },
@@ -286,7 +286,7 @@ class SocialRegisterScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               // ignore: deprecated_member_use
-                              RaisedButton(
+                              MaterialButton(
                                 onPressed: () {
                                   if (formKey.currentState!.validate()) {
                                     cubit.register(

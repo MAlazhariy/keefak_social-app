@@ -24,7 +24,7 @@ class DioHelper {
     }
 
     dio!.options.headers = {
-      'Authorization': 'key=${FirebaseKey.kFirebaseAppKey}',
+      'Authorization': 'key=AAAANeAm6JQ:APA91bHzS29rVZVey1cGroTjt5w5vS3ok0h3qcGUCY2uOkdaDHVzFyD-4xZmxASjwSiJePjrvWj4h3xnNNwir3ba18FlYlB4xdcJQe0P4w10Kqhax_NIpgFOqCnYOQvv0Kdb1-dl-5vE',
       'Content-Type': 'application/json',
     };
 

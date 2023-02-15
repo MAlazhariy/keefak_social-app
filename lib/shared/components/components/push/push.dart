@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-void push(
+Future<void> push(
   BuildContext context,
   Widget screen,
-) {
-  Navigator.push(
+) async {
+  await Navigator.push(
     context,
     MaterialPageRoute(builder: (context) {
       return screen;
